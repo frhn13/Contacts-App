@@ -10,15 +10,20 @@ int main() {
     int choice;
     std::string phone_number;
     std::string full_name;
+    std::string address;
     std::string postcode;
     std::string new_name;
     std::string new_number;
+    std::string new_address;
+    std::string new_postcode;
     std::vector<Contact> allContacts;
     int contactNumber = 1;
     Contact specificContact;
     Contact contactToEdit;  
     bool nameValidated;
     bool phoneValidated;
+    bool addressValidated;
+    bool postcodeValidated;
     int whatToEdit;
     
     do {
@@ -40,7 +45,9 @@ int main() {
                 for (Contact contact : allContacts) {
                     std::cout << "Contact " << contactNumber << ":\n";
                     std::cout << "Full name: " << contact.getName() << "\n";
-                    std::cout << "Phone Number: " << contact.getNumber() << "\n\n";
+                    std::cout << "Phone Number: " << contact.getNumber() << "\n";
+                    std::cout << "Address: " << contact.getAddress() << "\n";
+                    std::cout << "Postcode: " << contact.getPostcode() << "\n\n";
                     contactNumber++;
                 }
                 break;
@@ -52,11 +59,23 @@ int main() {
                     nameValidated = nameValidation(full_name);
                 } while (!nameValidated);
                 do {
-                    std::cout << "Enter their phone number: ";
+                    std::cout << "Enter their phone number without spaces: ";
                     std::cin >> phone_number;
                     phoneValidated = phoneValidation(phone_number);
                 } while (!phoneValidated);
-                addContactToFile(full_name, phone_number);
+                do {
+                    std::cout << "Enter their address: ";
+                    std::getline(std::cin >> std::ws, address);
+                    // addressValidated = addressValidation(address);
+                    addressValidated = true;
+                } while (!addressValidated);
+                do {
+                    std::cout << "Enter their postcode without spaces: ";
+                    std::getline(std::cin >> std::ws, postcode);
+                    //postcodeValidated = postcodeValidation(full_name);
+                    postcodeValidated = true;
+                } while (!postcodeValidated);
+                addContactToFile(full_name, phone_number, address, postcode);
                 break;
 
             case 3:

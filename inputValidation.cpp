@@ -14,7 +14,6 @@ bool nameValidation(std::string full_name) {
     for (char c : full_name) {
         if (!std::isalpha(c) && c != ' ') {
             std::cout << "Name should only have letters or spaces in it\n";
-            std::cout << c << "\n";
             return false;
         }
     }

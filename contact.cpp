@@ -5,9 +5,11 @@
 #include <iostream>
 #include "contact.h"
 
-Contact::Contact(std::string full_name, std::string phone_number) {
+Contact::Contact(std::string full_name, std::string phone_number, std::string address, std::string postcode) {
     this->full_name = full_name;
     this->phone_number = phone_number;
+    this->address = address;
+    this->postcode = postcode;
 }
 
 Contact::Contact() {
@@ -21,6 +23,14 @@ void Contact::setNumber(std::string phone_number) {
     this->phone_number = phone_number;
 }
 
+void Contact::setAddress(std::string address) {
+    this->full_name = address;
+}
+
+void Contact::setPostcode(std::string postcode) {
+    this->postcode = postcode;
+}
+
 std::string Contact::getName() {
     return full_name;
 }
@@ -29,28 +39,50 @@ std::string Contact::getNumber() {
     return phone_number;
 }
 
-void addContactToFile(std::string name, std::string number) {
+std::string Contact::getAddress() {
+    return address;
+}
+
+std::string Contact::getPostcode() {
+    return postcode;
+}
+
+void addContactToFile(std::string name, std::string number, std::string address, std::string postcode) {
     std::ofstream name_file;
     std::ofstream phone_file;
+    std::ofstream address_file;
+    std::ofstream postcode_file;
     name_file.open("names.txt", std::ios::app);
     name_file << name << std::endl;
     name_file.close();
     phone_file.open("phones.txt", std::ios::app);
     phone_file << number << std::endl;
     phone_file.close();
+    address_file.open("addresses.txt", std::ios::app);
+    address_file << address << std::endl;
+    address_file.close();
+    postcode_file.open("postcodes.txt", std::ios::app);
+    postcode_file << postcode << std::endl;
+    postcode_file.close();
 }
 
 std::vector<Contact> displayAllContacts() {
-    std::string input;
+    std::string name_input;
     std::string num_input;
+    std::string address_input;
+    std::string postcode_input;
     std::ifstream name_file("names.txt");
     std::ifstream phone_file("phones.txt");
+    std::ifstream address_file("addresses.txt");
+    std::ifstream postcode_file("postcodes.txt");
     std::vector<Contact> contactDetails;
     std::vector<std::string> names;
     std::vector<std::string> numbers;
+    std::vector<std::string> addresses;
+    std::vector<std::string> postcodes;
     if (name_file.is_open()) {
-        while(name_file >> input) {
-            names.push_back(input);
+        while(name_file >> name_input) {
+            names.push_back(name_input);
         }
     }
     else
@@ -60,8 +92,18 @@ std::vector<Contact> displayAllContacts() {
             numbers.push_back(num_input);
         }
     }
+    if (address_file.is_open()) {
+        while (address_file >> address_input){
+            addresses.push_back(address_input);
+        }
+    }
+    if (postcode_file.is_open()) {
+        while (postcode_file >> postcode_input){
+            postcodes.push_back(postcode_input);
+        }
+    }
     for (int x=0; x<names.size(); x++) {
-        Contact contact(names[x], numbers[x]);
+        Contact contact(names[x], numbers[x], addresses[x], postcodes[x]);
         contactDetails.push_back(contact);
     }
     return contactDetails;
