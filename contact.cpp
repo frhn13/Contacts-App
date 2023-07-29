@@ -120,7 +120,8 @@ Contact displaySpecificContact(std::string full_name) {
     return contact;
 }
 
-void deleteContact(std::string full_name) {
+bool deleteContact(std::string full_name) {
+    bool contact_deleted = false;
     std::ofstream name_file;
     std::ofstream phone_file;
     std::ofstream address_file;
@@ -129,23 +130,27 @@ void deleteContact(std::string full_name) {
     for (int x=0; x<allContacts.size(); x++) {
         if (strcasecmp(allContacts[x].getName().c_str(), full_name.c_str()) == 0) {
             allContacts.erase(allContacts.begin() + x);
+            contact_deleted = true;
             break;
         }
     }
-    name_file.open("names.txt");
-    phone_file.open("phones.txt");
-    address_file.open("addresses.txt");
-    postcode_file.open("postcodes.txt");
-    for (Contact contact : allContacts) {
-        name_file << contact.getName() << std::endl;
-        phone_file << contact.getNumber() << std::endl;
-        address_file << contact.getAddress() << std::endl;
-        postcode_file << contact.getPostcode() << std::endl;
+    if (contact_deleted) {
+        name_file.open("names.txt");
+        phone_file.open("phones.txt");
+        address_file.open("addresses.txt");
+        postcode_file.open("postcodes.txt");
+        for (Contact contact : allContacts) {
+            name_file << contact.getName() << std::endl;
+            phone_file << contact.getNumber() << std::endl;
+            address_file << contact.getAddress() << std::endl;
+            postcode_file << contact.getPostcode() << std::endl;
+        }
+        name_file.close();
+        phone_file.close();
+        address_file.close();
+        postcode_file.close();
     }
-    name_file.close();
-    phone_file.close();
-    address_file.close();
-    postcode_file.close();
+    return contact_deleted;
 }
 
 void changeEditedContact(std::string changedDetail, std::string oldName, int whatToEdit) {

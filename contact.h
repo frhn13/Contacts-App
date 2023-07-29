@@ -23,7 +23,7 @@ class Contact {
 void addContactToFile(std::string name, std::string number, std::string address, std::string postcode);
 std::vector<Contact> displayAllContacts();
 Contact displaySpecificContact(std::string full_name);
-void deleteContact(std::string full_name);
+bool deleteContact(std::string full_name);
 void changeEditedContact(std::string changed_detail, std::string oldName, int whatToEdit);
 
 #endif
