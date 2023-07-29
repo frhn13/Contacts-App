@@ -66,14 +66,12 @@ int main() {
                 do {
                     std::cout << "Enter their address: ";
                     std::getline(std::cin >> std::ws, address);
-                    // addressValidated = addressValidation(address);
-                    addressValidated = true;
+                    addressValidated = addressValidation(address);
                 } while (!addressValidated);
                 do {
                     std::cout << "Enter their postcode without spaces: ";
                     std::getline(std::cin >> std::ws, postcode);
-                    //postcodeValidated = postcodeValidation(full_name);
-                    postcodeValidated = true;
+                    postcodeValidated = postcodeValidation(postcode);
                 } while (!postcodeValidated);
                 addContactToFile(full_name, phone_number, address, postcode);
                 break;
@@ -88,10 +86,15 @@ int main() {
                 std::cout << "Enter the name of the contact you are looking for: ";
                 std::getline(std::cin >> std::ws, full_name);
                 specificContact = displaySpecificContact(full_name);
-                if (specificContact.getName() != "")
-                    std::cout << "Their phone number is: " << specificContact.getNumber() << "\n\n";
+                if (specificContact.getName() != "") {
+                    std::cout << "Contact Details:\n\n";
+                    std::cout << "Their full name is: " << specificContact.getName() << "\n";
+                    std::cout << "Their phone number is: " << specificContact.getNumber() << "\n";
+                    std::cout << "Their address is: " << specificContact.getAddress() << "\n";
+                    std::cout << "Their postcode is: " << specificContact.getPostcode() << "\n\n";
+                }
                 else
-                    std::cout << "That name doesn't have a a recorded phone number here.\n\n";
+                    std::cout << "That contact doesn't exist.\n\n";
                 break;
 
             case 5:
@@ -99,26 +102,45 @@ int main() {
                 std::getline(std::cin >> std::ws, full_name);
                 contactToEdit = displaySpecificContact(full_name);
                 if (contactToEdit.getName() != "") {
-                    std::cout << "Do you want to edit the name or phone number, answer with 1 or 2 respectively: ";
+                    std::cout << "Do you want to edit the name, phone number, address or postcode, answer with 1, 2, 3 or 4 respectively: ";
                     std::cin >> whatToEdit;
-                    if (whatToEdit == 1) {
-                        do {
-                            std::cout << "What would you like to change the name to: ";
-                            std::cin >> new_name;
-                            nameValidated = nameValidation(new_name);
-                        } while (!nameValidated);
-                        changeEditedContact(new_name, full_name, true);
+                    switch(whatToEdit) {
+                        case 1:
+                            do {
+                                std::cout << "What would you like to change the name to: ";
+                                std::getline(std::cin >> std::ws, new_name);
+                                nameValidated = nameValidation(new_name);
+                            } while (!nameValidated);
+                            changeEditedContact(new_name, full_name, whatToEdit);
+                            break;
+                        case 2:
+                            do {
+                                std::cout << "What would you like to change your phone number to: ";
+                                std::cin >> new_number;
+                                phoneValidated = phoneValidation(new_number);
+                            } while (!phoneValidated);
+                            changeEditedContact(new_number, full_name, whatToEdit);
+                            break;
+                        case 3:
+                            do {
+                                std::cout << "What would you like to change your phone number to: ";
+                                std::getline(std::cin >> std::ws, new_address);
+                                addressValidated = addressValidation(new_address);
+                            } while (!addressValidated);
+                            changeEditedContact(new_address, full_name, whatToEdit);
+                            break;
+                        case 4:
+                            do {
+                                std::cout << "What would you like to change your phone number to: ";
+                                std::cin >> new_postcode;
+                                postcodeValidated = postcodeValidation(new_postcode);
+                            } while (!postcodeValidated);
+                            changeEditedContact(new_postcode, full_name, whatToEdit);
+                            break;
+                        default:
+                            std::cout << "Input is invalid.\n\n";
+                            break;
                     }
-                    else if (whatToEdit == 2) {
-                        do {
-                            std::cout << "What would you like to change your phone number to: ";
-                            std::cin >> new_number;
-                            phoneValidated = phoneValidation(new_number);
-                        } while (!phoneValidated);
-                        changeEditedContact(new_number, full_name, false);
-                    }
-                    else
-                        std::cout << "Input is invalid.\n\n";
                 }
                 else
                     std::cout << "That contact doesn't exist\n\n";

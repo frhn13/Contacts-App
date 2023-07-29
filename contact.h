@@ -24,6 +24,6 @@ void addContactToFile(std::string name, std::string number, std::string address,
 std::vector<Contact> displayAllContacts();
 Contact displaySpecificContact(std::string full_name);
 void deleteContact(std::string full_name);
-void changeEditedContact(std::string changed_detail, std::string oldName, bool editName);
+void changeEditedContact(std::string changed_detail, std::string oldName, int whatToEdit);
 
 #endif

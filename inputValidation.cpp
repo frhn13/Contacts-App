@@ -43,3 +43,31 @@ bool phoneValidation(std::string phone_number) {
     }
     return true;
 }
+
+bool addressValidation(std::string address) {
+    if (address.length() == 0 || address.length() > 40) {
+        std::cout << "Address length should be between 0 and 40 characters\n";
+        return false;
+    }
+    for (char c : address) {
+        if (!std::isalpha(c) && !std::isdigit(c) && c!=' ') {
+            std::cout << "Address should only contain letters and numbers\n";
+            return false;
+        }
+    }
+    return true;
+}
+
+bool postcodeValidation(std::string postcode) {
+    if (postcode.length()<5 || postcode.length()>7) {
+        std::cout << "Postcode should be between 5 and 7 characters\n";
+        return false;
+    }
+    for (char c : postcode) {
+        if (!std::isalpha(c) && !std::isdigit(c)) {
+            std::cout << "Postcode should only contain letters and numbers\n";
+            return false;
+        }
+    }
+    return true;
+}

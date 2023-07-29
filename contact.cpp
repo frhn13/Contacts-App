@@ -123,6 +123,8 @@ Contact displaySpecificContact(std::string full_name) {
 void deleteContact(std::string full_name) {
     std::ofstream name_file;
     std::ofstream phone_file;
+    std::ofstream address_file;
+    std::ofstream postcode_file;
     std::vector<Contact> allContacts = displayAllContacts();
     for (int x=0; x<allContacts.size(); x++) {
         if (strcasecmp(allContacts[x].getName().c_str(), full_name.c_str()) == 0) {
@@ -132,30 +134,59 @@ void deleteContact(std::string full_name) {
     }
     name_file.open("names.txt");
     phone_file.open("phones.txt");
+    address_file.open("addresses.txt");
+    postcode_file.open("postcodes.txt");
     for (Contact contact : allContacts) {
         name_file << contact.getName() << std::endl;
         phone_file << contact.getNumber() << std::endl;
+        address_file << contact.getAddress() << std::endl;
+        postcode_file << contact.getPostcode() << std::endl;
     }
     name_file.close();
     phone_file.close();
+    address_file.close();
+    postcode_file.close();
 }
 
-void changeEditedContact(std::string changedDetail, std::string oldName, bool editName) {
+void changeEditedContact(std::string changedDetail, std::string oldName, int whatToEdit) {
     std::ofstream name_file;
     std::ofstream phone_file;
+    std::ofstream address_file;
+    std::ofstream postcode_file;
     std::vector<Contact> allContacts = displayAllContacts();
     for (int x=0; x<allContacts.size(); x++) {
         if (strcasecmp(allContacts[x].getName().c_str(), oldName.c_str()) == 0) {
-            editName ? allContacts[x].setName(changedDetail) : allContacts[x].setNumber(changedDetail);
+            switch(whatToEdit) {
+                case 1:
+                    allContacts[x].setName(changedDetail);
+                    break;
+                case 2:
+                    allContacts[x].setNumber(changedDetail);
+                    break;
+                case 3:
+                    allContacts[x].setAddress(changedDetail);
+                    break;
+                case 4:
+                    allContacts[x].setPostcode(changedDetail);
+                    break;
+                default:
+                    break;
+            }
             break;
         }
     }
     name_file.open("names.txt");
     phone_file.open("phones.txt");
+    address_file.open("addresses.txt");
+    postcode_file.open("postcodes.txt");
     for (Contact contact : allContacts) {
         name_file << contact.getName() << std::endl;
         phone_file << contact.getNumber() << std::endl;
+        address_file << contact.getAddress() << std::endl;
+        postcode_file << contact.getPostcode() << std::endl;
     }
     name_file.close();
     phone_file.close();
+    address_file.close();
+    postcode_file.close();
 }
