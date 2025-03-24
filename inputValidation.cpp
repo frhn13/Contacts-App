@@ -2,8 +2,8 @@
 #include <vector>
 #include <cstring>
 #include <string>
-#include "inputValidation.h"
-#include "contact.h"
+#include "inputValidation.hpp"
+#include "contact.hpp"
 
 bool nameValidation(std::string full_name) {
     std::vector<Contact> allContacts = displayAllContacts(); 
@@ -18,7 +18,7 @@ bool nameValidation(std::string full_name) {
         }
     }
     for (Contact contact : allContacts) {
-        if (strcasecmp(contact.getName().c_str(), full_name.c_str()) == 0) {
+        if (strncasecmp(contact.getName().c_str(), full_name.c_str(), 30) == 0) {
             std::cout << "Name can't be the same as a name already entered onto the app\n";
             return false;
         }
@@ -27,6 +27,7 @@ bool nameValidation(std::string full_name) {
 }
 
 bool phoneValidation(std::string phone_number) {
+    std::vector<Contact> allContacts = displayAllContacts();
     if (phone_number[0] != '0') {
         std::cout << "Phone number should start with 0\n";
         return false;
@@ -38,6 +39,12 @@ bool phoneValidation(std::string phone_number) {
     for (char c : phone_number) {
         if (!std::isdigit(c)) {
             std::cout << "Phone number should only have integers in it\n";
+            return false;
+        }
+    }
+    for (Contact contact : allContacts) {
+        if (strncasecmp(contact.getNumber().c_str(), phone_number.c_str(), 11) == 0) {
+            std::cout << "Name can't be the same as a name already entered onto the app\n";
             return false;
         }
     }

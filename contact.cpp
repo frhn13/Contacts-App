@@ -3,7 +3,8 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
-#include "contact.h"
+#include <sstream>
+#include "contact.hpp"
 
 Contact::Contact(std::string full_name, std::string phone_number, std::string address, std::string postcode) {
     this->full_name = full_name;
@@ -47,72 +48,48 @@ std::string Contact::getPostcode() {
     return postcode;
 }
 
-void addContactToFile(std::string name, std::string number, std::string address, std::string postcode) {
-    std::ofstream name_file;
-    std::ofstream phone_file;
-    std::ofstream address_file;
-    std::ofstream postcode_file;
-    name_file.open("names.txt", std::ios::app);
-    name_file << name << std::endl;
-    name_file.close();
-    phone_file.open("phones.txt", std::ios::app);
-    phone_file << number << std::endl;
-    phone_file.close();
-    address_file.open("addresses.txt", std::ios::app);
-    address_file << address << std::endl;
-    address_file.close();
-    postcode_file.open("postcodes.txt", std::ios::app);
-    postcode_file << postcode << std::endl;
-    postcode_file.close();
+bool addContactToFile(std::string name, std::string number, std::string address, std::string postcode) {
+    std::ofstream contacts_file("contacts.txt", std::ios::app);
+    if (!contacts_file.is_open())
+        return false;
+    contacts_file << name << "," << number << "," << address << "," << postcode << "\n";
+    contacts_file.close();
+    return true;
 }
 
 std::vector<Contact> displayAllContacts() {
-    std::string name_input;
-    std::string num_input;
-    std::string address_input;
-    std::string postcode_input;
-    std::ifstream name_file("names.txt");
-    std::ifstream phone_file("phones.txt");
-    std::ifstream address_file("addresses.txt");
-    std::ifstream postcode_file("postcodes.txt");
+    std::string contact_line;
+    std::ifstream contacts_file("contacts.txt");
     std::vector<Contact> contactDetails;
-    std::vector<std::string> names;
-    std::vector<std::string> numbers;
-    std::vector<std::string> addresses;
-    std::vector<std::string> postcodes;
-    if (name_file.is_open()) {
-        while(name_file >> name_input) {
-            names.push_back(name_input);
-        }
+
+    if (!contacts_file.is_open()) {
+        Contact contact;
+        contactDetails.push_back(contact);
+        return contactDetails;
     }
-    else
-        std::cout << "No contacts present.\n";
-    if (phone_file.is_open()) {
-        while (phone_file >> num_input){
-            numbers.push_back(num_input);
-        }
-    }
-    if (address_file.is_open()) {
-        while (address_file >> address_input){
-            addresses.push_back(address_input);
-        }
-    }
-    if (postcode_file.is_open()) {
-        while (postcode_file >> postcode_input){
-            postcodes.push_back(postcode_input);
-        }
-    }
-    for (int x=0; x<names.size(); x++) {
-        Contact contact(names[x], numbers[x], addresses[x], postcodes[x]);
+
+    while(std::getline(contacts_file, contact_line)) {
+        std::stringstream stringstream(contact_line);
+        std::string name_input, num_input, address_input, postcode_input;
+        std::getline(stringstream, name_input, ',');
+        std::getline(stringstream, num_input, ',');
+        std::getline(stringstream, address_input, ',');
+        std::getline(stringstream, postcode_input, '\n');
+        Contact contact(name_input, num_input, address_input, postcode_input);
         contactDetails.push_back(contact);
     }
+    contacts_file.close();
     return contactDetails;
 }
 
 Contact displaySpecificContact(std::string full_name) {
     std::vector<Contact> allContacts = displayAllContacts();
+    if (allContacts.empty() == false and allContacts[0].getName() == "") {
+        Contact contact = Contact("Invalid", "", "", "");
+        return contact;
+    }
     for (Contact contact : allContacts) {
-        if (strcasecmp(contact.getName().c_str(), full_name.c_str()) == 0) {
+        if (strncasecmp(contact.getName().c_str(), full_name.c_str(), 30) == 0) {
             return contact;
         }
     }
@@ -120,47 +97,40 @@ Contact displaySpecificContact(std::string full_name) {
     return contact;
 }
 
-bool deleteContact(std::string full_name) {
-    bool contact_deleted = false;
-    std::ofstream name_file;
-    std::ofstream phone_file;
-    std::ofstream address_file;
-    std::ofstream postcode_file;
+std::string deleteContact(std::string full_name) {
+    std::string contact_status = "ContactNotFound";
     std::vector<Contact> allContacts = displayAllContacts();
+    if (allContacts.empty() == false and allContacts[0].getName() == "")
+        return "NoFile";
+    
     for (int x=0; x<allContacts.size(); x++) {
-        if (strcasecmp(allContacts[x].getName().c_str(), full_name.c_str()) == 0) {
+        if (strncasecmp(allContacts[x].getName().c_str(), full_name.c_str(), 30) == 0) {
             allContacts.erase(allContacts.begin() + x);
-            contact_deleted = true;
+            contact_status = "ContactFound";
             break;
         }
     }
-    if (contact_deleted) {
-        name_file.open("names.txt");
-        phone_file.open("phones.txt");
-        address_file.open("addresses.txt");
-        postcode_file.open("postcodes.txt");
-        for (Contact contact : allContacts) {
-            name_file << contact.getName() << std::endl;
-            phone_file << contact.getNumber() << std::endl;
-            address_file << contact.getAddress() << std::endl;
-            postcode_file << contact.getPostcode() << std::endl;
-        }
-        name_file.close();
-        phone_file.close();
-        address_file.close();
-        postcode_file.close();
+    if (contact_status == "ContactNotFound")
+        return contact_status;
+
+    std::ofstream contacts_file("contacts.txt");
+    if (!contacts_file) {
+        contact_status = "NoFile";
+        return contact_status;
     }
-    return contact_deleted;
+    for (Contact contact : allContacts)
+        contacts_file << contact.getName() << "," << contact.getNumber() << "," << contact.getAddress() << "," << contact.getPostcode() << "\n";
+    contacts_file.close();
+    return contact_status;
 }
 
-void changeEditedContact(std::string changedDetail, std::string oldName, int whatToEdit) {
-    std::ofstream name_file;
-    std::ofstream phone_file;
-    std::ofstream address_file;
-    std::ofstream postcode_file;
+bool changeEditedContact(std::string changedDetail, std::string oldName, int whatToEdit) {
     std::vector<Contact> allContacts = displayAllContacts();
+    if (allContacts.empty() == false and allContacts[0].getName() == "")
+        return false;
+    std::ofstream contacts_file("contacts.txt");
     for (int x=0; x<allContacts.size(); x++) {
-        if (strcasecmp(allContacts[x].getName().c_str(), oldName.c_str()) == 0) {
+        if (strncasecmp(allContacts[x].getName().c_str(), oldName.c_str(), 30) == 0) {
             switch(whatToEdit) {
                 case 1:
                     allContacts[x].setName(changedDetail);
@@ -180,18 +150,12 @@ void changeEditedContact(std::string changedDetail, std::string oldName, int wha
             break;
         }
     }
-    name_file.open("names.txt");
-    phone_file.open("phones.txt");
-    address_file.open("addresses.txt");
-    postcode_file.open("postcodes.txt");
-    for (Contact contact : allContacts) {
-        name_file << contact.getName() << std::endl;
-        phone_file << contact.getNumber() << std::endl;
-        address_file << contact.getAddress() << std::endl;
-        postcode_file << contact.getPostcode() << std::endl;
+
+    if (!contacts_file) {
+        return false;
     }
-    name_file.close();
-    phone_file.close();
-    address_file.close();
-    postcode_file.close();
+    for (Contact contact : allContacts)
+        contacts_file << contact.getName() << "," << contact.getNumber() << "," << contact.getAddress() << "," << contact.getPostcode() << "\n";
+    contacts_file.close();
+    return true;
 }

@@ -1,5 +1,5 @@
-#ifndef CONTACT
-#define CONTACT
+#include <iostream>
+#include <vector>
 
 class Contact {
     private:
@@ -20,10 +20,8 @@ class Contact {
     std::string getPostcode();
 };
 
-void addContactToFile(std::string name, std::string number, std::string address, std::string postcode);
+bool addContactToFile(std::string name, std::string number, std::string address, std::string postcode);
 std::vector<Contact> displayAllContacts();
 Contact displaySpecificContact(std::string full_name);
-bool deleteContact(std::string full_name);
-void changeEditedContact(std::string changed_detail, std::string oldName, int whatToEdit);
-
-#endif
+std::string deleteContact(std::string full_name);
+bool changeEditedContact(std::string changed_detail, std::string oldName, int whatToEdit);
