@@ -49,7 +49,7 @@ std::string Contact::getPostcode() {
 }
 
 bool addContactToFile(std::string name, std::string number, std::string address, std::string postcode) {
-    std::ofstream contacts_file("contacts.txt", std::ios::app);
+    std::ofstream contacts_file("contacts.csv", std::ios::app);
     if (!contacts_file.is_open())
         return false;
     contacts_file << name << "," << number << "," << address << "," << postcode << "\n";
@@ -59,7 +59,7 @@ bool addContactToFile(std::string name, std::string number, std::string address,
 
 std::vector<Contact> displayAllContacts() {
     std::string contact_line;
-    std::ifstream contacts_file("contacts.txt");
+    std::ifstream contacts_file("contacts.csv");
     std::vector<Contact> contactDetails;
 
     if (!contacts_file.is_open()) {
@@ -75,8 +75,7 @@ std::vector<Contact> displayAllContacts() {
         std::getline(stringstream, num_input, ',');
         std::getline(stringstream, address_input, ',');
         std::getline(stringstream, postcode_input, '\n');
-        Contact contact(name_input, num_input, address_input, postcode_input);
-        contactDetails.push_back(contact);
+        contactDetails.push_back(Contact(name_input, num_input, address_input, postcode_input));
     }
     contacts_file.close();
     return contactDetails;
@@ -84,9 +83,8 @@ std::vector<Contact> displayAllContacts() {
 
 Contact displaySpecificContact(std::string full_name) {
     std::vector<Contact> allContacts = displayAllContacts();
-    if (allContacts.empty() == false and allContacts[0].getName() == "") {
-        Contact contact = Contact("Invalid", "", "", "");
-        return contact;
+    if (allContacts.empty() == false && allContacts[0].getName() == "") {
+        return Contact("Invalid", "", "", "");
     }
     for (Contact contact : allContacts) {
         if (strncasecmp(contact.getName().c_str(), full_name.c_str(), 30) == 0) {
@@ -100,7 +98,7 @@ Contact displaySpecificContact(std::string full_name) {
 std::string deleteContact(std::string full_name) {
     std::string contact_status = "ContactNotFound";
     std::vector<Contact> allContacts = displayAllContacts();
-    if (allContacts.empty() == false and allContacts[0].getName() == "")
+    if (allContacts.empty() == false && allContacts[0].getName() == "")
         return "NoFile";
     
     for (int x=0; x<allContacts.size(); x++) {
@@ -113,22 +111,23 @@ std::string deleteContact(std::string full_name) {
     if (contact_status == "ContactNotFound")
         return contact_status;
 
-    std::ofstream contacts_file("contacts.txt");
+    std::ofstream contacts_file("contacts.csv");
     if (!contacts_file) {
         contact_status = "NoFile";
         return contact_status;
     }
     for (Contact contact : allContacts)
-        contacts_file << contact.getName() << "," << contact.getNumber() << "," << contact.getAddress() << "," << contact.getPostcode() << "\n";
+        contacts_file << contact.getName() << "," << contact.getNumber() << "," 
+        << contact.getAddress() << "," << contact.getPostcode() << "\n";
     contacts_file.close();
     return contact_status;
 }
 
 bool changeEditedContact(std::string changedDetail, std::string oldName, int whatToEdit) {
     std::vector<Contact> allContacts = displayAllContacts();
-    if (allContacts.empty() == false and allContacts[0].getName() == "")
+    if (allContacts.empty() == false && allContacts[0].getName() == "")
         return false;
-    std::ofstream contacts_file("contacts.txt");
+    std::ofstream contacts_file("contacts.csv");
     for (int x=0; x<allContacts.size(); x++) {
         if (strncasecmp(allContacts[x].getName().c_str(), oldName.c_str(), 30) == 0) {
             switch(whatToEdit) {
@@ -155,7 +154,8 @@ bool changeEditedContact(std::string changedDetail, std::string oldName, int wha
         return false;
     }
     for (Contact contact : allContacts)
-        contacts_file << contact.getName() << "," << contact.getNumber() << "," << contact.getAddress() << "," << contact.getPostcode() << "\n";
+        contacts_file << contact.getName() << "," << contact.getNumber() << "," 
+        << contact.getAddress() << "," << contact.getPostcode() << "\n";
     contacts_file.close();
     return true;
 }
